@@ -1,0 +1,44 @@
+﻿@model Employee
+@{ 
+    ViewData["Title"] = "Add Employee";
+}
+<h2>Add Employee</h2>
+<div class="container">
+    <form>
+        <div class="row">
+            <div class="col-md-5">
+                <label>First Name</label>
+                <input asp-for="FirstName" />
+                <span asp-validation-for="FirstName"></span>
+            </div>
+            <div class="col-md-5">
+                <label>Last Name</label>
+                <input asp-for="LastName" />
+                <span asp-validation-for="LastName"></span>
+            </div>
+            <div class="col-md-5">
+                <label>Last Name</label>
+                <input asp-for="LastName" />
+                <span asp-validation-for="LastName"></span>
+            </div>
+            <div class="col-md-5">
+                <label>Birth Date</label>
+                <input asp-for="DateOfBirth" type="text" />
+                <span asp-validation-for="DateOfBirth"></span>
+            </div>
+            <div class="col-md-5">
+                <label>Hire Date</label>
+                <input asp-for="DateOfHire" type="text" />
+                <span asp-validation-for="DateOfHire"></span>
+            </div>
+            <div class="col-md-5">
+                <label>Manager</label>
+                <input asp-for="ManagerID" />
+                <select asp-for="ManagerID" asp-items="@(new SelectList(ViewBag.Employees, "EmployeeID", "FullName"))"></select>
+                <span asp-validation-for="ManagerID"></span>
+            </div>
+        </div>
+        <button type="submit" class="btn-dark">Add</button>
+        <a asp-controller="Home" asp-action="Index">Cancel</a>
+    </form>
+</div>

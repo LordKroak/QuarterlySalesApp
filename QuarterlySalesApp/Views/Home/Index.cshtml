@@ -1,0 +1,39 @@
+﻿@model ViewModel
+@{
+    ViewData["Title"] = "Quarterly Sales";
+}
+
+<div class="container">
+    <header>
+        <label>Employee</label>
+        <form asp-controller="Home">
+            <select asp-for="EmployeeID" asp-items="@(new SelectList(Model.EmployeeList, "EmployeeID", "FullName"))"></select>
+            <span asp-validation-for="EmployeeID"></span>
+            <button type="submit" class="btn-dark">Filter</button>
+        </form>
+    </header>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Year</th>
+                <th>Quarter</th>
+                <th>Employee</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                @foreach(var Sales in Model.SalesList)
+                {
+                    <td asp-for="@Sales.Year"></td>
+                    <td asp-for="@Sales.Quarter"></td>
+                    <td asp-for="@Sales.Employee.FullName"></td>
+                    <td asp-for="@Sales.SalesAmount"></td>
+                }
+            </tr>
+            <tr>
+                <th>TotalSales</th>
+            </tr>
+        </tbody>
+    </table>
+</div>
