@@ -16,7 +16,30 @@ namespace QuarterlySalesApp.Controllers
         {
             Context = context;
         }
+        [HttpPost]
+        public IActionResult Add(Employee Employee)
+        {
+            string msg = Validation.CheckEmployee(Context, Employee.FirstName, Employee.LastName, Employee.DateOfBirth); //checks database
+            if (!string.IsNullOrEmpty(msg))
+            {
+                ModelState.AddModelError(nameof(Employee.DateOfBirth), msg);
+            }
+            //do the same thing for checking the manager
+            //code will be the same thing except call other validation function
+            if (ModelState.IsValid)
+            {
+                Context.Employees.Add(Employee); //adds it to entity framework
+                Context.SaveChanges(); //saves it to the database
+                TempData["msg"] = "Employee was added.";
+                return RedirectToAction("Index", "Home"); //takes us back to the page
+            }
+            else //if there is a validation error, pass a list of the employees
+            {
+                ViewBag.Employees = Context.Employees.ToList();
+                return View();
+            }
 
+        }
         public IActionResult Add()
         {
             //populate viewbag employees with a list of employees

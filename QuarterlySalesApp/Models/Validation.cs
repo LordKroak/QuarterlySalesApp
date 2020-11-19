@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using QuarterlySalesApp.Models;
 
 namespace QuarterlySalesApp.Models
 {
@@ -38,6 +42,23 @@ namespace QuarterlySalesApp.Models
             {
                 return msg = $"";
             }
+        }
+
+        public static string CheckSales(EmployeeContext context, Sales sale)
+        {
+            string msg = " ";
+            Sales Sales = context.Sales.FirstOrDefault(
+                c => c.EmployeeID == sale.EmployeeID
+                && c.Year == sale.Year
+                && c.Quarter == sale.Quarter);
+
+            if(Sales == null)
+            {
+                return string.Empty;
+            }
+
+            Employee employee = context.Employees.Find(sale.EmployeeID);
+            return msg = $"Sales for {employee.FullName} for {sale.Year} Q{sale.Quarter} are alread in the database.";
         }
     }
 }

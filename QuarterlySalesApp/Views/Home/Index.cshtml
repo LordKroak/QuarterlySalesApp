@@ -1,17 +1,25 @@
 ﻿@model ViewModel
 @{
-    ViewData["Title"] = "Quarterly Sales";
+    ViewBag.Title = "Quarterly Sales";
 }
 
-<div class="container">
-    <header>
-        <label>Employee</label>
-        <form asp-controller="Home">
-            <select asp-for="EmployeeID" asp-items="@(new SelectList(Model.EmployeeList, "EmployeeID", "FullName"))"></select>
-            <span asp-validation-for="EmployeeID"></span>
-            <button type="submit" class="btn-dark">Filter</button>
-        </form>
-    </header>
+<h4 class="mt-2 mb-2">@ViewBag.Title</h4>
+
+<form asp-action="Index" method="post">
+    <div class="form-group row">
+        <label class="col-sm-2 col-form-label">Employee</label>
+
+        <div class="col-sm-4">
+            <select name="EmployeeID" class="form-control" asp-items="@(new SelectList(Model.EmployeeList, "EmployeeID", "FullName", Model.EmployeeID))">
+                <option value="0">All</option>
+            </select>
+        </div>
+
+        <div class="col">
+            <button type="submit" class="btn btn-primary">Filter</button>
+        </div>
+    </div>
+
     <table class="table">
         <thead>
             <tr>
@@ -22,18 +30,22 @@
             </tr>
         </thead>
         <tbody>
-            <tr>
-                @foreach(var Sales in Model.SalesList)
-                {
-                    <td asp-for="@Sales.Year"></td>
-                    <td asp-for="@Sales.Quarter"></td>
-                    <td asp-for="@Sales.Employee.FullName"></td>
-                    <td asp-for="@Sales.SalesAmount"></td>
-                }
-            </tr>
-            <tr>
-                <th>TotalSales</th>
-            </tr>
+            @foreach (var Sales in Model.SalesList)
+            {
+                <tr>
+                    <td>@Sales.Year</td>
+                    <td>@Sales.Quarter</td>
+                    <td>@Sales.Employee.FirstName</td>
+                    <td>@Sales.SalesAmount?.ToString("c")</td>
+                </tr>
+            }
         </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3">Total Sales</td>
+                <td>@Model.SalesList.Sum(s => s.SalesAmount)?.ToString("c")</td>
+            </tr>
+        </tfoot>
     </table>
-</div>
+</form>
+

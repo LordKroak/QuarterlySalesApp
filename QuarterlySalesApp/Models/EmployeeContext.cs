@@ -70,7 +70,7 @@ namespace QuarterlySalesApp.Models
                 {
                     SalesID = 3,
                     Quarter = 2,
-                    Year = 202020,
+                    Year = 2020,
                     SalesAmount = 42322,
                     EmployeeID = 3
                 }
