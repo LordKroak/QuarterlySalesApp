@@ -16,6 +16,29 @@ namespace QuarterlySalesApp.Controllers
         {
             Context = context;
         }
+        [HttpPost]
+        public IActionResult Add(Sales Sales)
+        {
+            string msg = Validation.CheckSales(Context, sale); //checks database
+            if (!string.IsNullOrEmpty(msg))
+            {
+                ModelState.AddModelError(nameof(Sales.Year), msg);
+            }
+            //do the same thing for checking the manager
+            //code will be the same thing except call other validation function
+            if (ModelState.IsValid)
+            {
+                Context.Sales.Add(Sales); //adds it to entity framework
+                Context.SaveChanges(); //saves it to the database
+                TempData["msg"] = "Sale was added.";
+                return RedirectToAction("Index", "Home"); //takes us back to the page
+            }
+            else //if there is a validation error, pass a list of the employees
+            {
+                ViewBag.Sales = Context.Sales.ToList();
+                return View();
+            }
+        }
         public IActionResult Add()
         {
             //populate viewbag sales with a list of sales
