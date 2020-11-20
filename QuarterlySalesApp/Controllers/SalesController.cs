@@ -19,10 +19,10 @@ namespace QuarterlySalesApp.Controllers
         [HttpPost]
         public IActionResult Add(Sales Sales)
         {
-            string msg = Validation.CheckSales(Context, sale); //checks database
+            string msg = Validation.CheckSales(Context, Sales); //checks database
             if (!string.IsNullOrEmpty(msg))
             {
-                ModelState.AddModelError(nameof(Sales.Year), msg);
+                ModelState.AddModelError(nameof(Sales.EmployeeID), msg);
             }
             //do the same thing for checking the manager
             //code will be the same thing except call other validation function
