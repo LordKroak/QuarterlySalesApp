@@ -11,7 +11,7 @@ namespace QuarterlySalesApp.Models
     {
         [Required(ErrorMessage = "Enter a first name.")]
         [Remote("CheckEmployee", "Validation", AdditionalFields = "LastName, DateofBirth")]
-        [Display]
+        [Display(Name = "First Name")]
         public string FirstName { get; set; }
         [Required]
         [Display(Name = "Last Name")]

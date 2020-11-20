@@ -25,6 +25,11 @@ namespace QuarterlySalesApp.Controllers
                 ModelState.AddModelError(nameof(Employee.DateOfBirth), msg);
             }
             //do the same thing for checking the manager
+            msg = Validation.CheckManager(Context, Employee.FirstName, Employee.LastName, Employee.DateOfBirth, Employee.ManagerID);
+            if (!string.IsNullOrEmpty(msg))
+            {
+                ModelState.AddModelError(nameof(Employee.ManagerID), msg);
+            }
             //code will be the same thing except call other validation function
             if (ModelState.IsValid)
             {

@@ -53,7 +53,7 @@
     <div class="form-group row">
         <label asp-for="ManagerID" class="col-sm-2 col-form-label"></label>
         <div class="col-sm-4">
-            <select asp-form="ManagerID" class="form-control" 
+            <select asp-for="ManagerID" class="form-control" 
                     asp-items="@(new SelectList(ViewBag.Employees, "EmployeeID", "FullName"))">
                 <option value="0"></option>
             </select>

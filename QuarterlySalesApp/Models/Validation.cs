@@ -56,7 +56,7 @@ namespace QuarterlySalesApp.Models
             }
 
             Employee employee = ctx.Employees.Find(sales.EmployeeID);
-            return $"Sales for {employee.FullName} for {sales.Year} Q{sales.Quarter} are alread in the database.";
+            return $"Sales for {employee.FullName} for {sales.Year} Q{sales.Quarter} are already in the database.";
         }
     }
 }

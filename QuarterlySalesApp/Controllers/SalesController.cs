@@ -35,14 +35,14 @@ namespace QuarterlySalesApp.Controllers
             }
             else //if there is a validation error, pass a list of the employees
             {
-                ViewBag.Sales = Context.Sales.ToList();
+                ViewBag.Employees = Context.Employees.ToList();
                 return View();
             }
         }
         public IActionResult Add()
         {
             //populate viewbag sales with a list of sales
-            ViewBag.Sales = Context.Sales.ToList();
+            ViewBag.Employees = Context.Employees.ToList();
             return View();
         }
         public IActionResult Index()
