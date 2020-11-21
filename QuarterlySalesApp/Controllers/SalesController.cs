@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using QuarterlySalesApp.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace QuarterlySalesApp.Controllers
 {
@@ -61,19 +62,47 @@ namespace QuarterlySalesApp.Controllers
 
             var vm = new ViewModel
             {
-                SalesList = data.Sales.List(options),
-                Employees = data.Employees.List(new QueryOptions<Employee>
+                SalesList = Data.Sales.List(options),
+                Employees = Data.Employees.List(new QueryOptions<Employee>
                 {
                     OrderBy = a => a.FirstName
                 }),
                 CurrentRoute = builder.CurrentRoute,
-                TotalPages = builder.GetTotalPages(data.Sales.Count)
+                TotalPages = builder.GetTotalPages(Data.Sales.Count)
             };
             return View(vm);
         }
         public IActionResult Index()
         {
             return View();
+        }
+        [HttpPost]
+        public RedirectToActionResult Filter(string[] filter, bool clear = false)
+        {
+            var builder = new SalesGridBuilder(HttpContext.Session);
+
+            if (clear)
+            {
+                builder.ClearFilterSegments();
+            }
+            else
+            {
+                var author = Data.Employees.Get(filter[0].ToInt());
+                builder.CurrentRoute.PageNumber = 1;
+                builder.LoadFilterSegments(filter, employee)
+            }
+            builder.SaveRouteSegments();
+            return RedirectToAction("List", builder.CurrentRoute);
+        }
+        [HttpPost]
+        public RedirectToActionResult PageSize(int pagesize)
+        {
+            var builder = new SalesGridBuilder(HttpContext.Session);
+
+            builder.CurrentRoute.PageSize = pagesize;
+            builder.SaveRouteSegments();
+
+            return RedirectToAction("List", builder.CurrentRoute);
         }
     }
 }

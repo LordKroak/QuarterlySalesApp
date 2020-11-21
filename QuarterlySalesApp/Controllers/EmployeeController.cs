@@ -12,11 +12,9 @@ namespace QuarterlySalesApp.Controllers
     public class EmployeeController : Controller
     {
         public EmployeeContext Context { get; set; }
-        public EmployeeController(EmployeeContext context)
-        {
-            data = new Repository<Employee>(context);
-            Context = context;
-        }
+        private Repository<Employee> Data { get; set; }
+        public EmployeeController(EmployeeContext context) => Data = new Repository<Employee>(context);
+        
         public ViewResult List(GridDTO vals)
         {
             // get GridBuilder object, load route segment values, store in session
@@ -43,14 +41,13 @@ namespace QuarterlySalesApp.Controllers
 
             var vm = new ViewModel
             {
-                Employees = data.List(options),
+                Employees = Data.List(options),
                 CurrentRoute = builder.CurrentRoute,
-                TotalPages = builder.GetTotalPages(data.Count)
+                TotalPages = builder.GetTotalPages(Data.Count)
             };
             return View(vm);
             
         }
-        private Repository<Employee> data { get; set; }
         
         [HttpPost]
         public IActionResult Add(Employee Employee)
