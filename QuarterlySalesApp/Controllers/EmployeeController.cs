@@ -14,8 +14,44 @@ namespace QuarterlySalesApp.Controllers
         public EmployeeContext Context { get; set; }
         public EmployeeController(EmployeeContext context)
         {
+            data = new Repository<Employee>(context);
             Context = context;
         }
+        public ViewResult List(GridDTO vals)
+        {
+            // get GridBuilder object, load route segment values, store in session
+            string defaultSort = nameof(Employee.FirstName);
+            var builder = new SalesGridBuilder(HttpContext.Session, vals, defaultSort);
+
+            //create options for querying employees
+            var options = new QueryOptions<Employee>
+            {
+                Includes = "Employee.EmployeeID",
+                PageNumber = builder.CurrentRoute.PageNumber,
+                PageSize = builder.CurrentRoute.PageSize,
+                OrderByDirection = builder.CurrentRoute.SortDirection
+            };
+            //OrderByy depends on value of SortField route
+            if (builder.CurrentRoute.SortField.EqualsNoCase(defaultSort))
+            {
+                options.OrderBy = a => a.FirstName;
+            }
+            else
+            {
+                options.OrderBy = a => a.LastName;
+            }
+
+            var vm = new ViewModel
+            {
+                Employees = data.List(options),
+                CurrentRoute = builder.CurrentRoute,
+                TotalPages = builder.GetTotalPages(data.Count)
+            };
+            return View(vm);
+            
+        }
+        private Repository<Employee> data { get; set; }
+        
         [HttpPost]
         public IActionResult Add(Employee Employee)
         {
@@ -51,6 +87,7 @@ namespace QuarterlySalesApp.Controllers
             ViewBag.Employees = Context.Employees.ToList();
             return View();
         }
+        
         public IActionResult Index()
         {
             return View();

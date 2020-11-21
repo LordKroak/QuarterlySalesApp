@@ -21,6 +21,7 @@ namespace QuarterlySalesApp.Models
         public int EmployeeID { get; set; } // to  hold pkey
         //to hold navigation to employee class
         public Employee Employee { get; set; }
+
         
     }
 }

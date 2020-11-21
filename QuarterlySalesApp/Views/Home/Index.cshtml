@@ -1,6 +1,9 @@
 ﻿@model ViewModel
 @{
     ViewBag.Title = "Quarterly Sales";
+
+    RouteDictionary Current = Model.CurrentRoute;
+    RouteDictionary routes = Model.CurrentRoute.Clone();
 }
 
 <h4 class="mt-2 mb-2">@ViewBag.Title</h4>
@@ -23,8 +26,15 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Year</th>
-                <th>Quarter</th>
+                <th>
+                    @{ routes.SetSortAndDirection(nameof(Sales.Year), Current) }
+                    <a asp-action="List" asp-all-route-data="@routes" class="text-white">Year</a>
+                </th>
+                <th>
+                    @{  routes.SetSortAndDirection(nameof(Sales.Quarter), Current) }
+                    <a asp-action="List" asp-all-route-data="@routes" class="text-white">Year</a>
+                
+                </th>
                 <th>Employee</th>
                 <th>Amount</th>
             </tr>
@@ -48,4 +58,11 @@
         </tfoot>
     </table>
 </form>
-
+@{ 
+    routes = Model.CurrentRoute.Clone();
+    for (int i = 1; i <= Model.TotalPages; i++)
+    {
+        routes.PageNumber = i;
+        <a asp-action="List" asp-all-route-data="@routes" class="btn btn-primary @Nav.Active(i, Current.PageNumber)">@i</a>
+    }
+}

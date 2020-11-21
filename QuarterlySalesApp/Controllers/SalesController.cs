@@ -45,6 +45,32 @@ namespace QuarterlySalesApp.Controllers
             ViewBag.Employees = Context.Employees.ToList();
             return View();
         }
+
+        public ViewResult List(SalesGridDTO values)
+        {
+            var builder = new SalesGridBuilder(HttpContext.Session, values, defaultSortField: nameof(Sales.Year));
+
+            var options = new QueryOptions
+            {
+                Include = "Employee.FullName, Year, Quarter, SalesAmount",
+                OrderByDirection = builder.CurrentRoute.SortDirection,
+                PageNumber = builder.CurrentRoute.PageNumber,
+                PageSize = builder.CurrentRoute.PageSize
+            };
+            options.SortFilter(builder);
+
+            var vm = new ViewModel
+            {
+                SalesList = data.Sales.List(options),
+                Employees = data.Employees.List(new QueryOptions<Employee>
+                {
+                    OrderBy = a => a.FirstName
+                }),
+                CurrentRoute = builder.CurrentRoute,
+                TotalPages = builder.GetTotalPages(data.Sales.Count)
+            };
+            return View(vm);
+        }
         public IActionResult Index()
         {
             return View();
