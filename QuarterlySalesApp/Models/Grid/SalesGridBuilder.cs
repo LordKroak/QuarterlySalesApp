@@ -34,7 +34,19 @@ namespace QuarterlySalesApp.Models
         }
 
         public void SaveRouteSegments() => session.SetObject<RouteDictionary>(RouteKey, routes);
-        
+        public void LoadFilterSegments(string[] filter, Employee employee)
+        {
+            if (employee == null)
+            {
+                routes.EmployeeFilter = FilterPrefix.Employee + filter[0];
+            }
+            else
+            {
+                routes.EmployeeFilter = FilterPrefix.Employee + filter[0]
+                    + "-" + employee.FullName.Slug();
+            }
+        }
+        public void ClearFilterSegments() => routes.ClearFilters();
         public int GetTotalPages(int count)
         {
             int size = routes.PageSize;

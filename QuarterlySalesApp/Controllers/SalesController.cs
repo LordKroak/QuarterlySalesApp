@@ -62,13 +62,13 @@ namespace QuarterlySalesApp.Controllers
 
             var vm = new ViewModel
             {
-                SalesList = Data.Sales.List(options),
-                Employees = Data.Employees.List(new QueryOptions<Employee>
+                SalesList = data.Sales.List(options),
+                Employees = data.Employees.List(new QueryOptions<Employee>
                 {
                     OrderBy = a => a.FirstName
                 }),
                 CurrentRoute = builder.CurrentRoute,
-                TotalPages = builder.GetTotalPages(Data.Sales.Count)
+                TotalPages = builder.GetTotalPages(data.Sales.Count)
             };
             return View(vm);
         }
@@ -87,9 +87,9 @@ namespace QuarterlySalesApp.Controllers
             }
             else
             {
-                var author = Data.Employees.Get(filter[0].ToInt());
+                var author = data.Employees.Get(filter[0].ToInt());
                 builder.CurrentRoute.PageNumber = 1;
-                builder.LoadFilterSegments(filter, employee)
+                builder.LoadFilterSegments(filter, employee);
             }
             builder.SaveRouteSegments();
             return RedirectToAction("List", builder.CurrentRoute);

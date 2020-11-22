@@ -49,6 +49,7 @@ namespace QuarterlySalesApp.Models
             get => Get(nameof(SalesGridDTO.Employee))?.Replace(FilterPrefix.Employee, "");
             set => this[nameof(SalesGridDTO.Employee)] = value;
         }
+        public void ClearFilters() => YearFilter = EmployeeFilter = QuarterFilter = SalesGridDTO.DefaultFilter;
 
         private string Get(string key) => Keys.Contains(key) ? this[key] : null;
 
