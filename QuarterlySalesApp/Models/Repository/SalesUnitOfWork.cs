@@ -7,8 +7,8 @@ namespace QuarterlySalesApp.Models
 {
     public class SalesUnitOfWork : ISalesUnitOfWork
     {
-        private EmployeeContext context { get; set; }
-        public SalesUnitOfWork(EmployeeContext context) => context = ctx;
+        private EmployeeContext Context { get; set; }
+        public SalesUnitOfWork(EmployeeContext context) => context = Context;
 
         private Repository<Sales> salesData;
         public Repository<Sales> Sales
@@ -17,7 +17,7 @@ namespace QuarterlySalesApp.Models
             {
                 if (salesData == null)
                 {
-                    salesData = new Repository<Sales>(context);
+                    salesData = new Repository<Sales>(Context);
                 }
                 return salesData;
             }
@@ -30,12 +30,12 @@ namespace QuarterlySalesApp.Models
             {
                 if (employeeData == null)
                 {
-                    employeeData = new Repository<Employee>(context);
+                    employeeData = new Repository<Employee>(Context);
                 }
                 return employeeData;
             }
         }
 
-        public void Save() => context.SaveChanges();
+        public void Save() => Context.SaveChanges();
     }
 }
