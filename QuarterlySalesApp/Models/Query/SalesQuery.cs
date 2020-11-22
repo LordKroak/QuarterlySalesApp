@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace QuarterlySalesApp.Models
 {
-    public class SalesQuery : QueryOptions<Sales>
+    public class SalesQueryOptions : QueryOptions<Sales>
     {
         public void SortFilter(SalesGridBuilder builder)
         {
