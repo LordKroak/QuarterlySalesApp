@@ -41,13 +41,13 @@ namespace QuarterlySalesApp.Models
             throw new NotImplementedException();
         }
 
-        void IRepository<T>.Insert(T entity) => dbset.Add(entity);
+        public virtual void Insert(T entity) => dbset.Add(entity);
 
-        void IRepository<T>.Update(T entity) => dbset.Update(entity);
+        public virtual void Update(T entity) => dbset.Update(entity);
 
-        void IRepository<T>.Delete(T entity) => dbset.Remove(entity);
+        public virtual void Delete(T entity) => dbset.Remove(entity);
 
-        void IRepository<T>.Save() => context.SaveChanges();
+        public virtual void Save() => context.SaveChanges();
 
         private IQueryable<T> BuildQuery(QueryOptions<T> options)
         {

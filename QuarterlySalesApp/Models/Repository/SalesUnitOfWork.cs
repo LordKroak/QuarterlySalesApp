@@ -8,7 +8,7 @@ namespace QuarterlySalesApp.Models
     public class SalesUnitOfWork : ISalesUnitOfWork
     {
         private EmployeeContext Context { get; set; }
-        public SalesUnitOfWork(EmployeeContext context) => context = Context;
+        public SalesUnitOfWork(EmployeeContext ctx) => Context = ctx;
 
         private Repository<Sales> salesData;
         public Repository<Sales> Sales

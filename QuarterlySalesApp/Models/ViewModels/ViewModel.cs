@@ -13,7 +13,7 @@ namespace QuarterlySalesApp.Models
         public int EmployeeID { get; set; }
         public List<Employee> EmployeeList { get; set; }
 
-        public List<Sales> SalesList { get; set; }
+        public IEnumerable<Sales> SalesList { get; set; }
         public double TotalSales { get; set; } //holds TotalSales
 
         public RouteDictionary CurrentRoute { get; set; }

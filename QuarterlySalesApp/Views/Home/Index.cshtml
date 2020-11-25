@@ -27,11 +27,11 @@
         <thead>
             <tr>
                 <th>
-                    @{ routes.SetSortAndDirection(nameof(Sales.Year), Current) }
+                    @{ routes.SetSortAndDirection(nameof(Sales.Year), Current); }
                     <a asp-action="List" asp-all-route-data="@routes" class="text-white">Year</a>
                 </th>
                 <th>
-                    @{  routes.SetSortAndDirection(nameof(Sales.Quarter), Current) }
+                    @{  routes.SetSortAndDirection(nameof(Sales.Quarter), Current); }
                     <a asp-action="List" asp-all-route-data="@routes" class="text-white">Year</a>
                 
                 </th>
@@ -63,6 +63,6 @@
     for (int i = 1; i <= Model.TotalPages; i++)
     {
         routes.PageNumber = i;
-        <a asp-action="List" asp-all-route-data="@routes" class="btn btn-primary @Nav.Active(i, Current.PageNumber)">@i</a>
+        <a asp-action="List" asp-all-route-data="@routes" class="btn btn-primary @(i == Current.PageNumber ? "active" : "")">@i</a>
     }
 }

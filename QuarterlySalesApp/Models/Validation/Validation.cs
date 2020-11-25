@@ -43,19 +43,22 @@ namespace QuarterlySalesApp.Models
                 return msg = $"";
             }
         }
-        public static string CheckSales(EmployeeContext ctx, Sales sales)
+        public static string CheckSales(SalesUnitOfWork data, Sales sales)
         {
-            Sales sale = ctx.Sales.FirstOrDefault(
-                s => s.EmployeeID == sales.EmployeeID
+            var options = new QueryOptions<Sales>
+            {
+                Where = s => s.EmployeeID == sales.EmployeeID
                 && s.Year == sales.Year
-                && s.Quarter == sales.Quarter);
+                && s.Quarter == sales.Quarter
+            };
 
+            Sales sale = data.Sales.Get(options);
             if (sale == null)
             {
                 return string.Empty;
             }
 
-            Employee employee = ctx.Employees.Find(sales.EmployeeID);
+            Employee employee = data.Employees.Get(sales.EmployeeID);
             return $"Sales for {employee.FullName} for {sales.Year} Q{sales.Quarter} are already in the database.";
         }
     }
