@@ -17,27 +17,39 @@ namespace QuarterlySalesApp.Controllers
             data = new SalesUnitOfWork(context);
         }
         [HttpPost]
-        public IActionResult Index(Employee Employee)
+        public IActionResult Filter(string[] filter, bool clear = false)
         {
-            //look to see if it is 0 or not
-            //if it is 0 show everything, otherwise show specific employee
-            if (Employee.EmployeeID > 0)
+            var builder = new SalesGridBuilder(HttpContext.Session);
+            if (clear)
             {
-                return RedirectToAction("Index", new{id = Employee.EmployeeID});
+                builder.ClearFilterSegments();
             }
-            return RedirectToAction("Index", new { id = 0 });
+            else
+            {
+                var employee = data.Employees.Get(filter[0].ToInt());
+                builder.LoadFilterSegments(filter, employee);
+            }
+            builder.SaveRouteSegments();
+            return RedirectToAction("Index", builder.CurrentRoute);
         }
-        public IActionResult Index(int id)
+        public IActionResult Index(SalesGridDTO id)
         {
             ViewModel view = new ViewModel(); //declares and instantiates a new copy of the class
             view.Employees = data.Employees.List(new QueryOptions<Employee> { OrderBy = e => e.FirstName });
             //filter through EmployeeID in SalesList (if EmployeeID)
+            string defaultSortField = nameof(Sales.Year);
+            SalesGridBuilder sales = new SalesGridBuilder(HttpContext.Session, id, defaultSortField);
             var options = new SalesQueryOptions
             {
-                Includes = "Employee"
-
+                Includes = "Employee",
+                OrderByDirection = sales.CurrentRoute.SortDirection,
+                PageNumber = sales.CurrentRoute.PageNumber,
+                PageSize = sales.CurrentRoute.PageSize
             };
+            options.SortFilter(sales);
             view.SalesList = data.Sales.List(options);
+            view.CurrentRoute = sales.CurrentRoute; //sets the value for CurrentRoute
+            view.TotalPages = sales.GetTotalPages(data.Sales.Count);
             //IQueryable<Sales> sales = data.Sales; //gets list
             //if (id > 0) //if statement that filters out 0, 0 will show all employees and sales. Greater then 0 will return a specific employee
             //{

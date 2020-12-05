@@ -11,14 +11,17 @@ namespace QuarterlySalesApp.Models
 {
     public class Validation
     {
-        public static string CheckEmployee(EmployeeContext ctx, string FirstName, string LastName, DateTime DateOfBirth)
+        public static string CheckEmployee(Repository<Employee> Data, Employee Employee)
         {
             string msg = " ";
             //check if employee already exists
-            var employee = ctx.Employees.FirstOrDefault(
-                c => c.FirstName.ToLower() == FirstName.ToLower()
-                && c.LastName.ToLower() == LastName.ToLower()
-                && c.DateOfBirth == DateOfBirth); 
+            var options = new QueryOptions<Employee>
+            {
+                Where = c => c.FirstName.ToLower() == Employee.FirstName.ToLower()
+                && c.LastName.ToLower() == Employee.LastName.ToLower()
+                && c.DateOfBirth == Employee.DateOfBirth
+            };
+            var employee = Data.Get(options);
             if (employee != null)
             {
                 return msg = $"Employee already exists.";
@@ -28,13 +31,11 @@ namespace QuarterlySalesApp.Models
                 return msg = $"";
             }
         }
-        public static string CheckManager(EmployeeContext ctx, string FirstName, string LastName, DateTime DateOfBirth, int ManagerID)
+        public static string CheckManager(Repository<Employee> Data, Employee employee)
         {
+            var manager = Data.Get(employee.ManagerID);
             string msg = " ";
-            var manager = ctx.Employees.FirstOrDefault(
-                c => c.EmployeeID == ManagerID
-                );
-            if(manager.FirstName.ToLower() == FirstName.ToLower() && manager.LastName.ToLower() == LastName.ToLower() && manager.DateOfBirth == DateOfBirth)
+            if(manager.FirstName.ToLower() == employee.FirstName.ToLower() && manager.LastName.ToLower() == employee.LastName.ToLower() && manager.DateOfBirth == employee.DateOfBirth && manager != null)
             {
                 return msg = $"Employee cannot be their own manager.";
             }
@@ -43,7 +44,7 @@ namespace QuarterlySalesApp.Models
                 return msg = $"";
             }
         }
-        public static string CheckSales(SalesUnitOfWork data, Sales sales)
+        public static string CheckSales(SalesUnitOfWork Data, Sales sales)
         {
             var options = new QueryOptions<Sales>
             {
@@ -52,13 +53,13 @@ namespace QuarterlySalesApp.Models
                 && s.Quarter == sales.Quarter
             };
 
-            Sales sale = data.Sales.Get(options);
+            Sales sale = Data.Sales.Get(options);
             if (sale == null)
             {
                 return string.Empty;
             }
 
-            Employee employee = data.Employees.Get(sales.EmployeeID);
+            Employee employee = Data.Employees.Get(sales.EmployeeID);
             return $"Sales for {employee.FullName} for {sales.Year} Q{sales.Quarter} are already in the database.";
         }
     }

@@ -12,15 +12,38 @@ namespace QuarterlySalesApp.Controllers
 {
     public class SalesController : Controller
     {
-        public SalesUnitOfWork data { get; set; }
+        public SalesUnitOfWork Data { get; set; }
         public SalesController(EmployeeContext context)
         {
-            data = new SalesUnitOfWork(context);
+            Data = new SalesUnitOfWork(context);
+        }
+        public ViewResult List(SalesGridDTO values)
+        {
+            var builder = new SalesGridBuilder(HttpContext.Session, values, defaultSortField: nameof(Sales.Year));
+
+            var options = new QueryOptions<Sales>
+            {
+                Includes = "Employee.FullName, Year, Quarter, SalesAmount",
+                OrderByDirection = builder.CurrentRoute.SortDirection,
+                PageNumber = builder.CurrentRoute.PageNumber,
+                PageSize = builder.CurrentRoute.PageSize
+            };
+            var vm = new ViewModel
+            {
+                SalesList = Data.Sales.List(options),
+                Employees = Data.Employees.List(new QueryOptions<Employee>
+                {
+                    OrderBy = a => a.FirstName
+                }),
+                CurrentRoute = builder.CurrentRoute,
+                TotalPages = builder.GetTotalPages(Data.Sales.Count)
+            };
+            return View(vm);
         }
         [HttpPost]
         public IActionResult Add(Sales Sales)
         {
-            string msg = Validation.CheckSales(data, Sales); //checks database
+            string msg = Validation.CheckSales(Data, Sales); //checks database
             if (!string.IsNullOrEmpty(msg))
             {
                 ModelState.AddModelError(nameof(Sales.EmployeeID), msg);
@@ -29,49 +52,24 @@ namespace QuarterlySalesApp.Controllers
             //code will be the same thing except call other validation function
             if (ModelState.IsValid)
             {
-                data.Sales.Insert(Sales); //adds it to entity framework
-                data.Save(); //saves it to the database
+                Data.Sales.Insert(Sales); //adds it to entity framework
+                Data.Save(); //saves it to the database
                 TempData["msg"] = "Sale was added.";
                 return RedirectToAction("Index", "Home"); //takes us back to the page
             }
             else //if there is a validation error, pass a list of the employees
             {
-                ViewBag.Employees = data.Employees.List(new QueryOptions<Employee> { OrderBy = e => e.FirstName }) ;
+                ViewBag.Employees = Data.Employees.List(new QueryOptions<Employee> { OrderBy = e => e.FirstName }) ;
                 return View();
             }
         }
         public IActionResult Add()
         {
             //populate viewbag sales with a list of sales
-            ViewBag.Employees = data.Employees.List(new QueryOptions<Employee> { OrderBy = e => e.FirstName });
+            ViewBag.Employees = Data.Employees.List(new QueryOptions<Employee> { OrderBy = e => e.FirstName });
             return View();
         }
 
-        //public ViewResult List(SalesGridDTO values)
-        //{
-        //    var builder = new SalesGridBuilder(HttpContext.Session, values, defaultSortField: nameof(Sales.Year));
-
-        //    var options = new QueryOptions
-        //    {
-        //        Include = "Employee.FullName, Year, Quarter, SalesAmount",
-        //        OrderByDirection = builder.CurrentRoute.SortDirection,
-        //        PageNumber = builder.CurrentRoute.PageNumber,
-        //        PageSize = builder.CurrentRoute.PageSize
-        //    };
-        //    options.SortFilter(builder);
-
-        //    var vm = new ViewModel
-        //    {
-        //        SalesList = data.Sales.List(options),
-        //        Employees = data.Employees.List(new QueryOptions<Employee>
-        //        {
-        //            OrderBy = a => a.FirstName
-        //        }),
-        //        CurrentRoute = builder.CurrentRoute,
-        //        TotalPages = builder.GetTotalPages(data.Sales.Count)
-        //    };
-        //    return View(vm);
-        //}
         public IActionResult Index()
         {
             return RedirectToAction("Index", "Home");

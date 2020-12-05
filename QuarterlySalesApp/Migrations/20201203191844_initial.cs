@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace QuarterlySalesApp.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -74,7 +74,7 @@ namespace QuarterlySalesApp.Migrations
             migrationBuilder.InsertData(
                 table: "Sales",
                 columns: new[] { "SalesID", "EmployeeID", "Quarter", "SalesAmount", "Year" },
-                values: new object[] { 3, 3, 2, 42322.0, 202020 });
+                values: new object[] { 3, 3, 2, 42322.0, 2020 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Sales_EmployeeID",

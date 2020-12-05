@@ -10,12 +10,21 @@ namespace QuarterlySalesApp.Controllers
 {
     public class ValidationController : Controller
     {
-        private EmployeeContext context;
-        public ValidationController(EmployeeContext ctx) => context = ctx; //get a copy of database context
-        public JsonResult CheckEmployee(string FirstName, string LastName, DateTime DateOfBirth)
+        private SalesUnitOfWork Data { get; set; } //get a copy of database context
+        public ValidationController(SalesUnitOfWork data)
+        {
+            Data = data;
+        }
+        public JsonResult CheckEmployee(string firstname, string lastname, DateTime dateofbirth)
         {
             //this checks to see if the employee currently exists in the database
-            string msg = Validation.CheckEmployee(context, FirstName, LastName, DateOfBirth); //checks database
+            var employee = new Employee
+            {
+                FirstName = firstname,
+                LastName = lastname,
+                DateOfBirth = dateofbirth
+            };
+            string msg = Validation.CheckEmployee(Data.Employees, employee); //checks database
             if (!string.IsNullOrEmpty(msg))
             {
                 return Json($"Employee is already registered.");
@@ -26,9 +35,16 @@ namespace QuarterlySalesApp.Controllers
             }
         }
 
-        public JsonResult CheckManager(string FirstName,string LastName,DateTime DateOfBirth, int ManagerID)
+        public JsonResult CheckManager(string firstname,string lastname,DateTime dateofbirth, int managerid)
         {
-            string msg = Validation.CheckManager(context, FirstName, LastName, DateOfBirth, ManagerID);
+            var manager = new Employee
+            {
+                FirstName = firstname,
+                LastName = lastname,
+                DateOfBirth = dateofbirth,
+                ManagerID = managerid
+            };
+            string msg = Validation.CheckManager(Data.Employees, manager);
             if (!string.IsNullOrEmpty(msg))
             {
                 return Json($"Employee can not be their own Manager.");

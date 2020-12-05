@@ -8,16 +8,25 @@
 
 <h4 class="mt-2 mb-2">@ViewBag.Title</h4>
 
-<form asp-action="Index" method="post">
+<form asp-action="Filter" method="post">
     <div class="form-group row">
         <label class="col-sm-2 col-form-label">Employee</label>
 
-        <div class="col-sm-4">
-            <select name="EmployeeID" class="form-control" asp-items="@(new SelectList(Model.EmployeeList, "EmployeeID", "FullName", Model.EmployeeID))">
-                <option value="0">All</option>
+        <div class="col-sm-2">
+            <select name="filter" class="form-control" asp-items="@(new SelectList(Model.Employees, "EmployeeID", "FullName", Current.EmployeeFilter.ToInt()))">
+                <option value="@SalesGridDTO.DefaultFilter">All</option>
             </select>
         </div>
-
+        <div class="col-sm-2">
+            <select name="filter" class="form-control" asp-items="@(new SelectList(Model.Years, Current.YearFilter.ToInt()))">
+                <option value="@SalesGridDTO.DefaultFilter">All</option>
+            </select>
+        </div>
+        <div class="col-sm-2">
+            <select name="filter" class="form-control" asp-items="@(new SelectList(Model.Quarters, Current.QuarterFilter.ToInt()))">
+                <option value="@SalesGridDTO.DefaultFilter">All</option>
+            </select>
+        </div>
         <div class="col">
             <button type="submit" class="btn btn-primary">Filter</button>
         </div>
@@ -31,12 +40,20 @@
                     <a asp-action="List" asp-all-route-data="@routes" class="text-white">Year</a>
                 </th>
                 <th>
-                    @{  routes.SetSortAndDirection(nameof(Sales.Quarter), Current); }
-                    <a asp-action="List" asp-all-route-data="@routes" class="text-white">Year</a>
-                
+                    @{ routes.SetSortAndDirection(nameof(Sales.Quarter), Current); }
+                    <a asp-action="List" asp-all-route-data="@routes" class="text-white">Quarter</a>
+
                 </th>
-                <th>Employee</th>
-                <th>Amount</th>
+                <th>
+                    @{ routes.SetSortAndDirection(nameof(Sales.Employee), Current); }
+                    <a asp-action="List" asp-all-route-data="@routes" class="text-white">Employee</a>
+
+                </th>
+                <th>
+                    @{ routes.SetSortAndDirection(nameof(Sales.SalesAmount), Current); }
+                    <a asp-action="List" asp-all-route-data="@routes" class="text-white">Amount</a>
+
+                </th>
             </tr>
         </thead>
         <tbody>

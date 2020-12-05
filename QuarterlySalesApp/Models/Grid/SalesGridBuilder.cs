@@ -21,15 +21,17 @@ namespace QuarterlySalesApp.Models
         }
 
         //this constructor used when need to store paging-sorting route segments
-        public SalesGridBuilder(ISession sess, GridDTO values, string defaultSortField)
+        public SalesGridBuilder(ISession sess, SalesGridDTO values, string defaultSortField)
         {
             session = sess;
             routes = new RouteDictionary();
             routes.PageNumber = values.PageNumber;
             routes.PageSize = values.PageSize;
-            routes.SortField = values.SortField;
+            routes.SortField = values.SortField??defaultSortField;
             routes.SortDirection = values.SortDirection;
-
+            routes.EmployeeFilter = values.Employee;
+            routes.YearFilter = values.Year;
+            routes.QuarterFilter = values.Quarter;
             SaveRouteSegments();
         }
 
@@ -38,13 +40,15 @@ namespace QuarterlySalesApp.Models
         {
             if (employee == null)
             {
-                routes.EmployeeFilter = FilterPrefix.Employee + filter[0];
+                routes.EmployeeFilter = filter[0];
             }
             else
             {
-                routes.EmployeeFilter = FilterPrefix.Employee + filter[0]
+                routes.EmployeeFilter = filter[0]
                     + "-" + employee.FullName.Slug();
             }
+            routes.YearFilter = filter[1];
+            routes.QuarterFilter = filter[2];
         }
         public void ClearFilterSegments() => routes.ClearFilters();
         public int GetTotalPages(int count)

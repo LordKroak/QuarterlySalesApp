@@ -10,8 +10,8 @@ using QuarterlySalesApp.Models;
 namespace QuarterlySalesApp.Migrations
 {
     [DbContext(typeof(EmployeeContext))]
-    [Migration("20201118190603_Initial")]
-    partial class Initial
+    [Migration("20201203191844_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -129,7 +129,7 @@ namespace QuarterlySalesApp.Migrations
                             EmployeeID = 3,
                             Quarter = 2,
                             SalesAmount = 42322.0,
-                            Year = 202020
+                            Year = 2020
                         });
                 });
 

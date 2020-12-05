@@ -127,7 +127,7 @@ namespace QuarterlySalesApp.Migrations
                             EmployeeID = 3,
                             Quarter = 2,
                             SalesAmount = 42322.0,
-                            Year = 202020
+                            Year = 2020
                         });
                 });
 

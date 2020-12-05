@@ -33,20 +33,31 @@ namespace QuarterlySalesApp.Models
         //Filters
         public string YearFilter
         {
-            get => Get(nameof(SalesGridDTO.Year))?.Replace(
-                FilterPrefix.Year, "");
+            get => Get(nameof(SalesGridDTO.Year));
             set => this[nameof(SalesGridDTO.Year)] = value;
         }
 
         public string QuarterFilter
         {
-            get => Get(nameof(SalesGridDTO.Quarter))?.Replace(FilterPrefix.Quarter, "");
+            get => Get(nameof(SalesGridDTO.Quarter));
             set => this[nameof(SalesGridDTO.Quarter)] = value;
         }
 
         public string EmployeeFilter
         {
-            get => Get(nameof(SalesGridDTO.Employee))?.Replace(FilterPrefix.Employee, "");
+            get
+            {
+                string employeeName = Get(nameof(SalesGridDTO.Employee));
+                int hSearch = employeeName?.IndexOf('-')??-1; //gives us the position of the '-' //if our employeeName is null, give a -1. Otherwise give position.
+                if(hSearch == -1)
+                {
+                    return employeeName;
+                }
+                else
+                {
+                    return employeeName.Substring(0, hSearch); //gets from start of string, to the '-' but does not include the '-'.
+                }
+            }
             set => this[nameof(SalesGridDTO.Employee)] = value;
         }
         public void ClearFilters() => YearFilter = EmployeeFilter = QuarterFilter = SalesGridDTO.DefaultFilter;

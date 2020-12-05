@@ -11,11 +11,10 @@ namespace QuarterlySalesApp.Controllers
 {
     public class EmployeeController : Controller
     {
-        public EmployeeContext Context { get; set; }
         private Repository<Employee> Data { get; set; }
         public EmployeeController(EmployeeContext context) => Data = new Repository<Employee>(context);
         
-        public ViewResult List(GridDTO vals)
+        public ViewResult List(SalesGridDTO vals)
         {
             // get GridBuilder object, load route segment values, store in session
             string defaultSort = nameof(Employee.FirstName);
@@ -29,7 +28,7 @@ namespace QuarterlySalesApp.Controllers
                 PageSize = builder.CurrentRoute.PageSize,
                 OrderByDirection = builder.CurrentRoute.SortDirection
             };
-            //OrderByy depends on value of SortField route
+            //OrderBy depends on value of SortField route
             if (builder.CurrentRoute.SortField.EqualsNoCase(defaultSort))
             {
                 options.OrderBy = a => a.FirstName;
@@ -52,13 +51,13 @@ namespace QuarterlySalesApp.Controllers
         [HttpPost]
         public IActionResult Add(Employee Employee)
         {
-            string msg = Validation.CheckEmployee(Context, Employee.FirstName, Employee.LastName, Employee.DateOfBirth); //checks database
+            string msg = Validation.CheckEmployee(Data, Employee); //checks database
             if (!string.IsNullOrEmpty(msg))
             {
                 ModelState.AddModelError(nameof(Employee.DateOfBirth), msg);
             }
             //do the same thing for checking the manager
-            msg = Validation.CheckManager(Context, Employee.FirstName, Employee.LastName, Employee.DateOfBirth, Employee.ManagerID);
+            msg = Validation.CheckManager(Data, Employee);
             if (!string.IsNullOrEmpty(msg))
             {
                 ModelState.AddModelError(nameof(Employee.ManagerID), msg);
@@ -66,14 +65,15 @@ namespace QuarterlySalesApp.Controllers
             //code will be the same thing except call other validation function
             if (ModelState.IsValid)
             {
-                Context.Employees.Add(Employee); //adds it to entity framework
-                Context.SaveChanges(); //saves it to the database
+                Data.Insert(Employee); //adds it to entity framework
+                Data.Save(); //saves it to the database
                 TempData["msg"] = "Employee was added.";
                 return RedirectToAction("Index", "Home"); //takes us back to the page
             }
             else //if there is a validation error, pass a list of the employees
             {
-                ViewBag.Employees = Context.Employees.ToList();
+                ViewBag.Employees = Data.List(new QueryOptions<Employee> { OrderBy = e => e.FirstName });
+
                 return View();
             }
 
@@ -81,7 +81,7 @@ namespace QuarterlySalesApp.Controllers
         public IActionResult Add()
         {
             //populate viewbag employees with a list of employees
-            ViewBag.Employees = Context.Employees.ToList();
+            ViewBag.Employees = Data.List(new QueryOptions<Employee> { OrderBy = e => e.FirstName });
             return View();
         }
         
